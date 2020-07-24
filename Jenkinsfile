@@ -2,7 +2,9 @@ pipeline {
     agent any
     tools { 
         maven 'Maven 3.6.3' 
-        jdk 'jdk113' 
+        jdk 'jdk113'
+        sonarqube 'sonarqube-scanner'
+
     }
     stages {
         stage ('Initialize') {
@@ -18,7 +20,7 @@ pipeline {
     steps {
         script 
         {
-                def scannerHome = tool 'sonarqube';
+                def scannerHome = tool 'sonarqube-scanner';
                 withSonarQubeEnv("sonarqube-container") {
                 sh "${tool("sonarqube")}/bin/sonar-scanner \
                 -Dsonar.projectKey=test-node-js \
