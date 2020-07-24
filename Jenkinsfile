@@ -3,7 +3,7 @@ pipeline {
     tools { 
         maven 'Maven 3.6.3' 
         jdk 'jdk113'
-        sonarqube 'sonarqube-scanner'
+  //      sonarqube 'sonarqube-scanner'
 
     }
     stages {
