@@ -13,18 +13,18 @@ pipeline {
                 ''' 
             }
         }
-        stage('Build') {
-            steps {
-                echo 'Building..'
-            }
-        }
-        stage('Test') {
-            steps {
-                echo 'Testing..'
-            }
-        }
+        // stage('Build') {
+        //     steps {
+        //         echo 'Building..'
+        //     }
+        // }
+        // stage('Test') {
+        //     steps {
+        //         echo 'Testing..'
+        //     }
+        // }
 
-        stage('Build MVN') { 
+        stage('Build-MVN') { 
 
             // def mvn_version = 'M3'
             steps {
