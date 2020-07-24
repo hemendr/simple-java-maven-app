@@ -25,16 +25,16 @@ pipeline {
         }
 
         stage('Build MVN') { 
-            sh 'mvn -B -DskipTests clean package' 
 
             // def mvn_version = 'M3'
-            // steps {
-            //     withEnv( ["PATH+MAVEN=${tool mvn_version}/bin"] ) 
-            //     {
-            //         //sh "mvn clean package"
-            //          sh 'mvn -B -DskipTests clean package' 
-            //     }
-            // }
+            steps {
+                sh 'mvn -B -DskipTests clean package' 
+                // withEnv( ["PATH+MAVEN=${tool mvn_version}/bin"] ) 
+                // {
+                //     //sh "mvn clean package"
+                //      sh 'mvn -B -DskipTests clean package' 
+                // }
+            }
         }
 
     }
