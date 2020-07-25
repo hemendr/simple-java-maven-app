@@ -16,22 +16,22 @@ pipeline {
             }
         }
 
-   stage('Code Quality Check via SonarQube') {
-    steps {
-        script 
-        {
-                def scannerHome = tool 'sonarqube-scanner';
-                withSonarQubeEnv("sonarqube-container") {
-                sh "${tool("sonarqube-scanner")}/bin/sonar-scanner \
-                -Dsonar.projectKey=test-node-js \
-                -Dsonar.sources=. \
-                -Dsonar.css.node=. \
-                -Dsonar.host.url=http://127.0.0.1:9000 \
-                -Dsonar.login=fa6ee6f740eb31d8c58fa21c07f8da2ae0580e56"
-                }
-            }
-        }
-    }
+//    stage('Code Quality Check via SonarQube') {
+//     steps {
+//         script 
+//         {
+//                 def scannerHome = tool 'sonarqube-scanner';
+//                 withSonarQubeEnv("sonarqube-container") {
+//                 sh "${tool("sonarqube-scanner")}/bin/sonar-scanner \
+//                 -Dsonar.projectKey=test-node-js \
+//                 -Dsonar.sources=. \
+//                 -Dsonar.css.node=. \
+//                 -Dsonar.host.url=http://127.0.0.1:9000 \
+//                 -Dsonar.login=fa6ee6f740eb31d8c58fa21c07f8da2ae0580e56"
+//                 }
+//             }
+//         }
+//     }
         // stage('Build') {
         //     steps {
         //         echo 'Building..'
@@ -47,7 +47,7 @@ pipeline {
 
             // def mvn_version = 'M3'
             steps {
-                sh 'mvn -B -DskipTests clean package' 
+                sh 'mvn -B -DskipTests clean package sonar:sonar'  
                 // withEnv( ["PATH+MAVEN=${tool mvn_version}/bin"] ) 
                 // {
                 //     //sh "mvn clean package"
