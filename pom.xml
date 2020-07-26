@@ -29,6 +29,11 @@
               <classpathPrefix>lib/</classpathPrefix>
               <mainClass>com.mycompany.app.App</mainClass>
             </manifest>
+            <manifestEntries>
+                <Specification-Title>${project.name}</Specification-Title>
+                <Specification-Version>${project.version}</Specification-Version>
+                <Implementation-Version>${build.number}</Implementation-Version>
+            </manifestEntries>
           </archive>
         </configuration>
       </plugin>
@@ -93,9 +98,10 @@
   <properties>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
+    <build.number>SNAPSHOT</build.number>
 </properties>
-<distributionManagement>
 
+<distributionManagement>
     <snapshotRepository>
         <id>snapshots</id>
         <name>fedlx01-snapshots</name>
@@ -103,3 +109,4 @@
     </snapshotRepository>
 </distributionManagement>
 </project>
+ 

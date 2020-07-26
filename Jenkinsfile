@@ -54,20 +54,17 @@ pipeline {
           }
 
 
-        stage('Build-MVN') { 
-
-            // def mvn_version = 'M3'
+        stage('Build-MVN') 
+        { 
             steps {
                 sh 'mvn -U -B -DskipTests clean package sonar:sonar'  
                 // withEnv( ["PATH+MAVEN=${tool mvn_version}/bin"] ) 
                 // {
-                //     //sh "mvn clean package"
+                //      sh "mvn clean package"
                 //      sh 'mvn -B -DskipTests clean package' 
                 // }
-            }
-            
+            }            
         }
-
 
         stage ('Artifactory Deploy')
         {
@@ -76,7 +73,6 @@ pipeline {
             //     branch "master"
             // }
             steps{
-
                     script 
                     {
                         def server = Artifactory.server('artifactory')
@@ -85,15 +81,11 @@ pipeline {
                         rtMaven.deployer server: server, releaseRepo: 'libs-release-local', snapshotRepo: 'libs-snapshot-local'
                         rtMaven.tool = 'Maven 3.6.3'
                         rtMaven.opts = '-Xms1024m -Xmx4096m'
-                        def buildInfo = rtMaven.run pom: 'pom.xml', goals: 'clean install'
+                        def buildInfo = rtMaven.run pom: 'pom.xml', goals: 'clean install -Dbuild.number=${BUILD_NUMBER}'
                         server.publishBuildInfo buildInfo
                     }
             }
         }
-
-
-
-
         stage('Test') 
         {
             steps {
