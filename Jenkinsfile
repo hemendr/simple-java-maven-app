@@ -81,7 +81,7 @@ pipeline {
                         rtMaven.deployer server: server, releaseRepo: 'libs-release-local', snapshotRepo: 'libs-snapshot-local'
                         rtMaven.tool = 'Maven 3.6.3'
                         rtMaven.opts = '-Xms1024m -Xmx4096m'
-                        def buildInfo = rtMaven.run pom: 'pom.xml', goals: 'clean install -Dbuild.number=${BUILD_NUMBER}'
+                        def buildInfo = rtMaven.run pom: 'pom.xml', goals: 'clean install -Dbuild.number=${BUILD_ID}'
                         server.publishBuildInfo buildInfo
                     }
             }
