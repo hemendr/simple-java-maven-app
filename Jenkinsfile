@@ -3,8 +3,6 @@ pipeline {
     tools { 
         maven 'Maven 3.6.3' 
         jdk 'jdk113'
-  //      sonarqube 'sonarqube-scanner'
-
     }
     stages {
         stage ('Initialize') {
@@ -15,6 +13,7 @@ pipeline {
                 ''' 
             }
         }
+    }
 
 //    stage('Code Quality Check via SonarQube') {
 //     steps {
@@ -32,75 +31,69 @@ pipeline {
 //             }
 //         }
 //     }
-        // stage('Build') {
-        //     steps {
-        //         echo 'Building..'
-        //     }
-        // }
-        // stage('Test') {
-        //     steps {
-        //         echo 'Testing..'
-        //     }
-        // }
 
-          stage("Build & SonarQube analysis") {
-           
-            steps {
-              withSonarQubeEnv("sonarqube-container") {
+    stage ('Build project') {
+        steps {
+            sh 'mvn clean verify'
+        }
+    }
+    stage("SonarQube Analysis") {
+    
+        steps {
+            withSonarQubeEnv("sonarqube-container") 
+            {
                 //sh 'mvn clean package sonar:sonar'
-                sh 'mvn -B -DskipTests clean package sonar:sonar'
-              }
-            }
-          }
-
-
-        stage('Build-MVN') 
-        { 
-            steps {
-                sh 'mvn -U -B -DskipTests clean package sonar:sonar'  
-                // withEnv( ["PATH+MAVEN=${tool mvn_version}/bin"] ) 
-                // {
-                //      sh "mvn clean package"
-                //      sh 'mvn -B -DskipTests clean package' 
-                // }
-            }            
-        }
-
-        stage ('Artifactory Deploy')
-        {
-            // when 
-            // {
-            //     branch "master"
-            // }
-            steps{
-                    script 
-                    {
-                        def server = Artifactory.server('artifactory')
-                        def rtMaven = Artifactory.newMavenBuild()
-                        rtMaven.resolver server: server, releaseRepo: 'libs-release', snapshotRepo: 'libs-snapshot'
-                        rtMaven.deployer server: server, releaseRepo: 'libs-release-local', snapshotRepo: 'libs-snapshot-local'
-                        rtMaven.tool = 'Maven 3.6.3'
-                        rtMaven.opts = '-Xms1024m -Xmx4096m'
-                        def buildInfo = rtMaven.run pom: 'pom.xml', goals: 'clean install -Dbuild.number=${BUILD_ID}'
-                        server.publishBuildInfo buildInfo
-                    }
+                sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.2:sonar'
             }
         }
-        stage('Test') 
-        {
-            steps {
-                sh 'mvn test'
+    }
+    stage("Build & SonarQube Analysis") {
+    
+        steps {
+            withSonarQubeEnv("sonarqube-container") {
+            //sh 'mvn clean package sonar:sonar'
+            sh 'mvn -U -B -DskipTests clean package sonar:sonar'
             }
-            post {
-                always {
-                    junit 'target/surefire-reports/*.xml'
+        }
+    }
+    // stage('Build-MVN') { 
+    //     steps {
+    //         sh 'mvn -U -B -DskipTests clean package sonar:sonar'  
+    //         // withEnv( ["PATH+MAVEN=${tool mvn_version}/bin"] ) 
+    //         // {
+    //         //      sh "mvn clean package"
+    //         //      sh 'mvn -B -DskipTests clean package' 
+    //         // }
+    //     }            
+    // }
+    stage ('Artifactory Deploy'){
+        steps{
+                script 
+                {
+                    def server = Artifactory.server('artifactory')
+                    def rtMaven = Artifactory.newMavenBuild()
+                    rtMaven.resolver server: server, releaseRepo: 'libs-release', snapshotRepo: 'libs-snapshot'
+                    rtMaven.deployer server: server, releaseRepo: 'libs-release-local', snapshotRepo: 'libs-snapshot-local'
+                    rtMaven.tool = 'Maven 3.6.3'
+                    rtMaven.opts = '-Xms1024m -Xmx4096m'
+                    def buildInfo = rtMaven.run pom: 'pom.xml', goals: 'clean install -Dbuild.number=${BUILD_ID}'
+                    server.publishBuildInfo buildInfo
                 }
+        }
+    }
+    stage('Test') {
+        steps {
+            sh 'mvn test'
+        }
+        post {
+            always {
+                junit 'target/surefire-reports/*.xml'
             }
         }
-        stage('Deliver') { 
-            steps {
-                sh './jenkins/scripts/deliver.sh' 
-            }
+    }
+    stage('Deliver') { 
+        steps {
+            sh './jenkins/scripts/deliver.sh' 
         }
     }
 }
