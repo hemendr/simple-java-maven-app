@@ -58,7 +58,7 @@ pipeline {
 
             // def mvn_version = 'M3'
             steps {
-                sh 'mvn -B -DskipTests clean package sonar:sonar'  
+                sh 'mvn -U -B -DskipTests clean package sonar:sonar'  
                 // withEnv( ["PATH+MAVEN=${tool mvn_version}/bin"] ) 
                 // {
                 //     //sh "mvn clean package"
