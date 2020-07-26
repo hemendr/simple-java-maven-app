@@ -32,12 +32,12 @@ pipeline {
 //         }
 //     }
 
-        stage ('Validate project') {
+        stage ('Validate') {
             steps {
                 sh 'mvn -U clean validate'
             }
         }
-        stage("Code Quality Analysis") {
+        stage("Quality Analysis") {
         
             steps {
                 withSonarQubeEnv("sonarqube-container") 
@@ -76,7 +76,7 @@ pipeline {
         //         // }
         //     }            
         // }
-        stage ('Artifactory Deploy'){
+        stage ('Deploy'){
             steps{
                 script 
                 {
