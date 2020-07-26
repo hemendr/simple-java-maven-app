@@ -32,12 +32,12 @@ pipeline {
 //         }
 //     }
 
-        stage ('Build project') {
+        stage ('Validate project') {
             steps {
-                sh 'mvn clean verify'
+                sh 'mvn -U clean validate'
             }
         }
-        stage("SonarQube Analysis") {
+        stage("Code Quality Analysis") {
         
             steps {
                 withSonarQubeEnv("sonarqube-container") 
@@ -47,12 +47,22 @@ pipeline {
                 }
             }
         }
-        stage("Build & SonarQube Analysis") {
+        stage('Test') {
+            steps {
+                sh 'mvn test'
+            }
+            post {
+                always {
+                    junit 'target/surefire-reports/*.xml'
+                }
+            }
+        }
+        stage("Build") {
         
             steps {
                 withSonarQubeEnv("sonarqube-container") {
                 //sh 'mvn clean package sonar:sonar'
-                sh 'mvn -U -B -DskipTests clean package sonar:sonar'
+                sh 'mvn -U -B -DskipTests clean package'
                 }
             }
         }
@@ -81,16 +91,7 @@ pipeline {
                 }
             }
         }
-        stage('Test') {
-            steps {
-                sh 'mvn test'
-            }
-            post {
-                always {
-                    junit 'target/surefire-reports/*.xml'
-                }
-            }
-        }
+
         stage('Deliver') { 
             steps {
                 sh './jenkins/scripts/deliver.sh' 
