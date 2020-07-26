@@ -71,10 +71,10 @@ pipeline {
 
         stage ('Artifactory Deploy')
         {
-            when 
-            {
-                branch "master"
-            }
+            // when 
+            // {
+            //     branch "master"
+            // }
             steps{
 
                     script 
