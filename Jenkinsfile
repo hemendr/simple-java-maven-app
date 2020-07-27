@@ -4,6 +4,7 @@ pipeline {
         maven 'Maven 3.6.3' 
         jdk 'jdk113'
     }
+
     stages {
         stage ('Initialize') {
             steps {
@@ -14,7 +15,6 @@ pipeline {
             }
         }
     
-
 //    stage('Code Quality Check via SonarQube') {
 //     steps {
 //         script 
@@ -42,7 +42,7 @@ pipeline {
             steps {
                 withSonarQubeEnv("sonarqube-container") 
                 {
-                    sh 'mvn clean sonar:sonar'
+                    sh 'mvn sonar:sonar'
                     //sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.2:sonar'
                 }
             }
@@ -61,8 +61,8 @@ pipeline {
         
             steps {
                 withSonarQubeEnv("sonarqube-container") {
-                //sh 'mvn clean package sonar:sonar'
-                sh 'mvn -U -B -DskipTests clean package'
+                    //sh 'mvn clean package sonar:sonar'
+                    sh 'mvn -U -B -DskipTests package'
                 }
             }
         }
@@ -91,7 +91,6 @@ pipeline {
                 }
             }
         }
-
         stage('Deliver') { 
             steps {
                 sh './jenkins/scripts/deliver.sh' 
