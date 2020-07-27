@@ -37,7 +37,12 @@ pipeline {
                 sh 'mvn -U clean validate'
             }
         }
-        stage("Quality Analysis") {
+        stage ('Compile') {
+            steps {
+                sh 'mvn compile'
+            }
+        }
+        stage("Code Inspection") {
         
             steps {
                 withSonarQubeEnv("sonarqube-container") 
