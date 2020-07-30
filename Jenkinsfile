@@ -4,7 +4,7 @@ pipeline {
         maven 'Maven 3.6.3' 
         jdk 'jdk113'
     }
-    final FULL_BUILD = true;
+//    final FULL_BUILD = true;
     stages {
         stage ('Initialize') {
             steps {
@@ -96,13 +96,12 @@ pipeline {
                 }
             }
         }
-  
-        if(FULL_BUILD) {
-            stage('Approval') {
+
+        stage('Approval') {  
+
                 timeout(time:3, unit:'DAYS') {
                     input 'Do I have your approval for deployment?'
                 }
-            }
         }
 
         stage('Deploy') { 
