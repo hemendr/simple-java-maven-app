@@ -68,6 +68,7 @@ pipeline {
                 withSonarQubeEnv("sonarqube-container") {
                     //sh 'mvn clean package sonar:sonar'
                     sh 'mvn -U -B -DskipTests package'
+                    stash name: "artifact", includes: "target/*.jar"
                 }
             }
         }
@@ -85,6 +86,12 @@ pipeline {
             steps{
                 script 
                 {
+                    unstash 'artifact'
+                    def pom = readMavenPom file: 'pom.xml'
+                    def file = "${pom.artifactId}-${pom.version}"
+                    def jar = "target/*.jar"
+                    sh "cp pom.xml ${file}.pom"
+
                     def server = Artifactory.server('artifactory')
                     def rtMaven = Artifactory.newMavenBuild()
                     rtMaven.resolver server: server, releaseRepo: 'libs-release', snapshotRepo: 'libs-snapshot'
