@@ -96,6 +96,7 @@ pipeline {
                 }
             }
         }
+  
         if(FULL_BUILD) {
             stage('Approval') {
                 timeout(time:3, unit:'DAYS') {
