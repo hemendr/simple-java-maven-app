@@ -4,7 +4,7 @@ pipeline {
         maven 'Maven 3.6.3' 
         jdk 'jdk113'
     }
-
+    final FULL_BUILD = true;
     stages {
         stage ('Initialize') {
             steps {
@@ -47,7 +47,7 @@ pipeline {
             steps {
                 withSonarQubeEnv("sonarqube-container") 
                 {
-                    sh 'mvn sonar:sonar'
+                    sh 'mvn sonar:sonar -DskipTests'
                     //sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.2:sonar'
                 }
             }
@@ -81,7 +81,7 @@ pipeline {
         //         // }
         //     }            
         // }
-        stage ('Deploy'){
+        stage ('Artifact Upload'){
             steps{
                 script 
                 {
@@ -96,7 +96,15 @@ pipeline {
                 }
             }
         }
-        stage('Deliver') { 
+        if(FULL_BUILD) {
+            stage('Approval') {
+                timeout(time:3, unit:'DAYS') {
+                    input 'Do I have your approval for deployment?'
+                }
+            }
+        }
+
+        stage('Deploy') { 
             steps {
                 sh './jenkins/scripts/deliver.sh' 
             }
